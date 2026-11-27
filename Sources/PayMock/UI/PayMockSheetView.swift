@@ -160,8 +160,19 @@ public struct PayMockSheetView: View {
                 .padding(.vertical, 16)
             }
         }
-        .background(Color(UIColor.systemBackground))
+        .background(sheetBackgroundColor)
         .cornerRadius(18)
+        .accessibilityIdentifier("paymock_sheet")
+    }
+
+    private var sheetBackgroundColor: Color {
+        #if canImport(UIKit)
+        return Color(UIColor.systemBackground)
+        #elseif canImport(AppKit)
+        return Color(NSColor.windowBackgroundColor)
+        #else
+        return Color.white
+        #endif
     }
 
     @ViewBuilder
@@ -204,6 +215,7 @@ public struct PayMockSheetView: View {
         }
         .buttonStyle(.plain)
         .disabled(isSimulating)
+        .accessibilityIdentifier("paymock_btn_\(scenario.testId)")
     }
 
     private func handleSelection(_ scenario: PayMockScenario) {

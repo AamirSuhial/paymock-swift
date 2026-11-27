@@ -78,7 +78,7 @@ public struct CheckoutView: View {
             }
         }
         .padding(16)
-        .background(Color(UIColor.secondarySystemBackground))
+        .background(secondaryCardBackground)
         .cornerRadius(14)
     }
 
@@ -134,7 +134,7 @@ public struct CheckoutView: View {
                             }
                         }
                         .padding(12)
-                        .background(selectedBrand == brand ? brand.brandColor.opacity(0.08) : Color(UIColor.secondarySystemBackground))
+                        .background(selectedBrand == brand ? brand.brandColor.opacity(0.08) : secondaryCardBackground)
                         .cornerRadius(12)
                     }
                     .buttonStyle(.plain)
@@ -295,8 +295,18 @@ public struct CheckoutView: View {
             }
         }
         .padding(14)
-        .background(Color(UIColor.secondarySystemBackground))
+        .background(secondaryCardBackground)
         .cornerRadius(12)
+    }
+
+    private var secondaryCardBackground: Color {
+        #if canImport(UIKit)
+        return Color(UIColor.secondarySystemBackground)
+        #elseif canImport(AppKit)
+        return Color(NSColor.controlBackgroundColor)
+        #else
+        return Color.secondary.opacity(0.1)
+        #endif
     }
 
     private func executePayment() {
