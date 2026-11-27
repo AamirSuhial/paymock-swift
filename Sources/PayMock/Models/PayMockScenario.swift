@@ -62,4 +62,31 @@ public enum PayMockScenario: Hashable, Identifiable, Codable {
         case .customDecline(_, let msg): return msg
         }
     }
+
+    /// Deterministic identifier suffix used for Maestro / XCUITest accessibility tags.
+    public var testId: String {
+        switch self {
+        case .success: return "success"
+        case .cancelled: return "cancelled"
+        case .insufficientFunds: return "insufficient_funds"
+        case .cardExpired: return "card_expired"
+        case .timeout: return "timeout"
+        case .networkError: return "network_error"
+        case .partialBalance: return "partial_balance"
+        case .customDecline: return "custom_decline"
+        }
+    }
+
+    /// Parses a scenario string from Maestro launch arguments or environment variables.
+    public static func from(string: String) -> PayMockScenario {
+        switch string.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() {
+        case "success": return .success()
+        case "cancelled", "cancel": return .cancelled
+        case "insufficient_funds", "insufficient": return .insufficientFunds
+        case "card_expired", "expired": return .cardExpired
+        case "timeout": return .timeout
+        case "network_error": return .networkError
+        default: return .success()
+        }
+    }
 }

@@ -77,4 +77,23 @@ final class PayMockTests: XCTestCase {
 
         PayMock.clearPresetScenarios()
     }
+
+    @MainActor
+    func testMaestroLaunchOverridesAndOutboundURLInterception() async {
+        PayMock.initialize(config: .init(autoDispatchReturnURL: false, simulateLatency: false))
+        PayMock.shared.loadLaunchOverrides(
+            arguments: ["App", "-PAYMOCK_FORCE_VIPPS", "cancelled"],
+            environment: ["PAYMOCK_LATENCY": "0"]
+        )
+
+        let url = URL(string: "vippsMT://pay?orderId=ORD-555&amount=249.00&returnUrl=myapp://cb")!
+        let result = await PayMock.handleOutboundURL(url)
+        XCTAssertEqual(result, .cancelled)
+
+        let unknownUrl = URL(string: "https://example.com/home")!
+        let ignored = await PayMock.handleOutboundURL(unknownUrl)
+        XCTAssertNil(ignored)
+
+        PayMock.clearPresetScenarios()
+    }
 }
